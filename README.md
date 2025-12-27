@@ -78,3 +78,118 @@ public class KeynoteRestController {
 ```
 
 ![Keynote Rest Controller](images/keynote-rest-controller.png)
+
+## 5- Developper et tester le micro-service conference-service (Entities, DAO, service, DTO, Mapper, RestController, Client Rest Open Feign)
+
+Entity (Conference, Review):
+```java
+@Entity
+@Table(name = "conferences")
+public class Conference {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String titre;
+    @Enumerated(EnumType.STRING)
+    private ConferenceType type;
+    private LocalDate date;
+    private Integer duree;
+    private Integer nombreInscrits;
+    private Double score;
+    private Long keynoteId;
+    @OneToMany(mappedBy = "conference", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews;
+}
+```
+
+```java
+@Entity
+@Table(name = "reviews")
+public class Review {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private LocalDate date;
+    private String texte;
+    private Integer stars;
+}
+```
+
+DTO (ConferenceDto, ReviewDto):
+```java
+public class ConferenceDto {
+    private Long id;
+    private String titre;
+    private ConferenceType type;
+    private LocalDate date;
+    private Integer duree;
+    private Integer nombreInscrits;
+    private Double score;
+    private Long keynoteId;
+    private List<ReviewDto> reviews;
+}
+```
+
+```java
+public class ReviewDto {
+    private Long id;
+    private LocalDate date;
+    private String texte;
+    private Integer stars;
+}
+```
+
+Repository:
+```java
+public interface ConferenceRepository extends JpaRepository<Conference, Long> {
+}
+```
+
+Service:
+```java
+public interface ConferenceService {
+    ConferenceDto create(ConferenceDto dto);
+    ConferenceDto update(Long id, ConferenceDto dto);
+    void delete(Long id);
+    ConferenceDto getById(Long id);
+    List<ConferenceDto> getAll();
+    ReviewDto addReview(Long conferenceId, ReviewDto reviewDto);
+    List<ReviewDto> getReviews(Long conferenceId);
+    KeynoteDto getKeynote(Long conferenceId);
+}
+```
+
+Feign Client:
+```java
+@FeignClient(name = "keynote-service")
+public interface KeynoteClient {
+    @GetMapping("/api/keynotes/{id}")
+    KeynoteDto getKeynoteById(@PathVariable("id") Long id);
+}
+```
+
+Web (RestController):
+```java
+@RestController
+@RequestMapping("/api/conferences")
+public class ConferenceRestController {
+    @PostMapping
+    public ConferenceDto create(@RequestBody ConferenceDto dto) { ... }
+    @GetMapping("/{id}")
+    public ConferenceDto getById(@PathVariable Long id) { ... }
+    @GetMapping
+    public List<ConferenceDto> getAll() { ... }
+    @PutMapping("/{id}")
+    public ConferenceDto update(@PathVariable Long id, @RequestBody ConferenceDto dto) { ... }
+    @PostMapping("/{id}/reviews")
+    public ReviewDto addReview(@PathVariable Long id, @RequestBody ReviewDto dto) { ... }
+    @GetMapping("/{id}/reviews")
+    public List<ReviewDto> getReviews(@PathVariable Long id) { ... }
+}
+```
+
+![Conference Rest Controller](images/conference-rest-controller.png)
+
+## 6- Développer un simple frontend web pour l’application
+
+Un simple frontend web est développé avec Angular dans le dossier `angular-front-app` (liste des conférences et keynotes, navigation de base).
