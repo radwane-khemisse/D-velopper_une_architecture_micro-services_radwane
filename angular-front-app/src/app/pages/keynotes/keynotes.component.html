@@ -1,0 +1,58 @@
+<section class="panel">
+  <div class="panel__head">
+    <div>
+      <h2>Keynotes</h2>
+      <p class="muted">Create and manage keynote speakers.</p>
+    </div>
+    <span class="badge" [class.is-loading]="loadingKeynotes">
+      {{ loadingKeynotes ? 'Loading...' : 'Ready' }}
+    </span>
+  </div>
+
+  <form class="form" (ngSubmit)="addKeynote()">
+    <div class="form__row">
+      <label>
+        First name
+        <input [(ngModel)]="keynoteForm.prenom" name="keynotePrenom" placeholder="Amina" required />
+      </label>
+      <label>
+        Last name
+        <input [(ngModel)]="keynoteForm.nom" name="keynoteNom" placeholder="Benali" required />
+      </label>
+    </div>
+    <div class="form__row">
+      <label>
+        Email
+        <input [(ngModel)]="keynoteForm.email" name="keynoteEmail" type="email" placeholder="amina@example.com" />
+      </label>
+      <label>
+        Role
+        <input [(ngModel)]="keynoteForm.fonction" name="keynoteFonction" placeholder="Professor" />
+      </label>
+    </div>
+    <div class="form__row">
+      <button class="btn primary" type="submit">
+        {{ editingId ? 'Update keynote' : 'Add keynote' }}
+      </button>
+      <button class="btn ghost" type="button" (click)="cancelEdit()" *ngIf="editingId">
+        Cancel
+      </button>
+    </div>
+    <span class="status" [class.error]="errorMessage">{{ errorMessage || statusMessage }}</span>
+  </form>
+
+  <div class="list">
+    <p *ngIf="!loadingKeynotes && keynotes.length === 0" class="empty">No keynotes yet.</p>
+    <article class="card" *ngFor="let keynote of keynotes; trackBy: trackById">
+      <div>
+        <h3>{{ keynote.prenom }} {{ keynote.nom }}</h3>
+        <p class="muted">{{ keynote.fonction || 'Speaker' }}</p>
+        <p class="meta">{{ keynote.email || 'No email' }}</p>
+      </div>
+      <div class="actions">
+        <button class="btn ghost" type="button" (click)="startEdit(keynote)">Update</button>
+        <button class="btn text" type="button" (click)="deleteKeynote(keynote.id)">Delete</button>
+      </div>
+    </article>
+  </div>
+</section>

@@ -1,0 +1,49 @@
+<section class="hero">
+  <div class="hero__copy">
+    <p class="eyebrow">Conference Keynote App</p>
+    <h2>Microservice Overview</h2>
+    <p class="lead">
+      Navigate between microservices to manage keynotes, conferences, and reviews.
+    </p>
+    <div class="hero__actions">
+      <button class="btn ghost" type="button" (click)="refresh()">Refresh data</button>
+      <span class="status" [class.error]="errorMessage">{{ errorMessage || statusMessage }}</span>
+    </div>
+  </div>
+  <div class="hero__stats">
+    <div class="stat">
+      <span class="stat__label">Keynotes</span>
+      <span class="stat__value">{{ keynotesCount }}</span>
+      <span class="stat__meta">port 8082</span>
+    </div>
+    <div class="stat">
+      <span class="stat__label">Conferences</span>
+      <span class="stat__value">{{ conferencesCount }}</span>
+      <span class="stat__meta">port 8083</span>
+    </div>
+  </div>
+</section>
+
+<section class="grid">
+  <article class="panel">
+    <div class="panel__head">
+      <h3>Keynote Service</h3>
+      <span class="badge">Functional</span>
+    </div>
+    <p class="muted">Manage keynote speakers and their profiles.</p>
+    <div class="links">
+      <a routerLink="/keynotes">Open keynotes</a>
+    </div>
+  </article>
+
+  <article class="panel">
+    <div class="panel__head">
+      <h3>Conference Service</h3>
+      <span class="badge">Functional</span>
+    </div>
+    <p class="muted">Handle conferences, reviews, and keynote assignments.</p>
+    <div class="links">
+      <a routerLink="/conferences">Open conferences</a>
+    </div>
+  </article>
+</section>

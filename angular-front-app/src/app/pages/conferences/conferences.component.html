@@ -1,0 +1,113 @@
+<section class="panel">
+  <div class="panel__head">
+    <div>
+      <h2>Conferences</h2>
+      <p class="muted">Manage conferences, reviews, and keynote assignments.</p>
+    </div>
+    <span class="badge" [class.is-loading]="loadingConferences">
+      {{ loadingConferences ? 'Loading...' : 'Ready' }}
+    </span>
+  </div>
+
+  <form class="form" (ngSubmit)="addConference()">
+    <div class="form__row">
+      <label>
+        Title
+        <input [(ngModel)]="conferenceForm.titre" name="conferenceTitre" placeholder="Cloud Native Architecture" required />
+      </label>
+      <label>
+        Type
+        <select [(ngModel)]="conferenceForm.type" name="conferenceType">
+          <option [ngValue]="'ACADEMIC'">Academic</option>
+          <option [ngValue]="'COMMERCIAL'">Commercial</option>
+        </select>
+      </label>
+    </div>
+    <div class="form__row">
+      <label>
+        Date
+        <input [(ngModel)]="conferenceForm.date" name="conferenceDate" type="date" required />
+      </label>
+      <label>
+        Duration (min)
+        <input [(ngModel)]="conferenceForm.duree" name="conferenceDuree" type="number" min="15" />
+      </label>
+    </div>
+    <div class="form__row">
+      <label>
+        Attendees
+        <input [(ngModel)]="conferenceForm.nombreInscrits" name="conferenceInscrits" type="number" min="0" />
+      </label>
+      <label>
+        Score
+        <input [(ngModel)]="conferenceForm.score" name="conferenceScore" type="number" step="0.1" min="0" max="5" />
+      </label>
+      <label>
+        Keynote id
+        <input [(ngModel)]="conferenceForm.keynoteId" name="conferenceKeynoteId" type="number" min="1" />
+      </label>
+    </div>
+    <div class="form__row">
+      <button class="btn primary" type="submit">
+        {{ editingId ? 'Update conference' : 'Add conference' }}
+      </button>
+      <button class="btn ghost" type="button" (click)="cancelEdit()" *ngIf="editingId">
+        Cancel
+      </button>
+    </div>
+    <span class="status" [class.error]="errorMessage">{{ errorMessage || statusMessage }}</span>
+  </form>
+
+  <div class="list">
+    <p *ngIf="!loadingConferences && conferences.length === 0" class="empty">No conferences yet.</p>
+    <article class="card wide" *ngFor="let conference of conferences; trackBy: trackById">
+      <div class="card__header">
+        <div>
+          <h3>{{ conference.titre }}</h3>
+          <p class="muted">{{ conference.type }} - {{ conference.date }} - {{ conference.duree }} min</p>
+        </div>
+        <div class="actions">
+          <button class="btn ghost" type="button" (click)="startEdit(conference)">Update</button>
+          <button class="btn text" type="button" (click)="deleteConference(conference.id)">Delete</button>
+        </div>
+      </div>
+      <div class="meta-grid">
+        <div>
+          <span class="meta__label">Attendees</span>
+          <span class="meta__value">{{ conference.nombreInscrits }}</span>
+        </div>
+        <div>
+          <span class="meta__label">Score</span>
+          <span class="meta__value">{{ conference.score }}</span>
+        </div>
+        <div>
+          <span class="meta__label">Keynote</span>
+          <span class="meta__value">{{ conference.keynoteId || 'N/A' }}</span>
+        </div>
+      </div>
+
+      <div class="reviews" *ngIf="conference.id as conferenceId">
+        <h4>Reviews</h4>
+        <div class="review-list">
+          <div *ngFor="let review of conference.reviews || []; trackBy: trackById" class="review">
+            <div>
+              <p class="review__text">{{ review.texte }}</p>
+              <p class="review__meta">{{ review.date }}</p>
+            </div>
+            <span class="review__stars">{{ review.stars }} stars</span>
+          </div>
+          <p *ngIf="!conference.reviews || conference.reviews.length === 0" class="empty">
+            No reviews yet.
+          </p>
+        </div>
+
+        <form class="inline-form" (ngSubmit)="addReview(conferenceId)" *ngIf="reviewDrafts[conferenceId] as draft">
+          <input [(ngModel)]="draft.date" name="reviewDate-{{ conferenceId }}" type="date" />
+          <input [(ngModel)]="draft.texte" name="reviewText-{{ conferenceId }}" placeholder="Share feedback..." />
+          <input [(ngModel)]="draft.stars" name="reviewStars-{{ conferenceId }}" type="number" min="1" max="5" />
+          <button class="btn ghost" type="submit">Add review</button>
+        </form>
+      </div>
+    </article>
+  </div>
+</section>

@@ -1,0 +1,22 @@
+<div class="page">
+  <header class="topbar">
+    <div class="brand">
+      <span class="eyebrow">Conference Keynote App</span>
+      <h1>Microservice UI</h1>
+    </div>
+    <nav class="nav">
+      <a
+        *ngFor="let link of navLinks; trackBy: trackByPath"
+        [routerLink]="link.path"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        {{ link.label }}
+      </a>
+    </nav>
+  </header>
+
+  <main class="shell__content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

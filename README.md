@@ -190,6 +190,48 @@ public class ConferenceRestController {
 
 ![Conference Rest Controller](images/conference-rest-controller.png)
 
-## 6- Développer un simple frontend web pour l’application
+## 6- Developper un simple frontend web pour l application
 
-Un simple frontend web est développé avec Angular dans le dossier `angular-front-app` (liste des conférences et keynotes, navigation de base).
+Frontend Angular (multi-pages) dans `angular-front-app`.
+
+Routing (pages principales):
+```ts
+export const routes: Routes = [
+  { path: '', redirectTo: 'overview', pathMatch: 'full' },
+  { path: 'overview', component: OverviewComponent },
+  { path: 'keynotes', component: KeynotesComponent },
+  { path: 'conferences', component: ConferencesComponent }
+];
+```
+
+API calls (services):
+```ts
+private readonly keynoteBase = 'http://localhost:8082/api/keynotes';
+private readonly conferenceBase = 'http://localhost:8083/api/conferences';
+
+getKeynotes(): Observable<Keynote[]> { ... }
+createKeynote(payload: Keynote): Observable<Keynote> { ... }
+updateKeynote(id: number, payload: Keynote): Observable<Keynote> { ... }
+```
+
+Keynotes UI (create/update):
+```ts
+addKeynote(): void {
+  if (this.editingId != null) {
+    this.api.updateKeynote(this.editingId, this.keynoteForm).subscribe(...);
+  } else {
+    this.api.createKeynote(this.keynoteForm).subscribe(...);
+  }
+}
+```
+
+Conferences UI (create/reviews):
+```ts
+addReview(conferenceId: number): void {
+  this.api.addReview(conferenceId, draft).subscribe(...);
+}
+```
+
+![Angular Overview](images/angular-overview.png)
+![Keynote UI](images/keynote-ui.png)
+![Conferences UI](images/conferences-ui.png)
